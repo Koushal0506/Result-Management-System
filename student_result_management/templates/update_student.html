@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Update Student - Student Result Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h4 class="fw-bold mb-0">Update Student Information</h4>
+                    <p class="text-muted small mb-0">Editing profile for <b>{{ student.student_name }}</b> (Roll: {{ student.roll_number }})</p>
+                </div>
+                <a href="{{ url_for('view_students') }}" class="btn btn-outline-secondary btn-sm">
+                    &larr; Back to Students List
+                </a>
+            </div>
+
+            <div class="card border shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('update_student', id=student._id) }}">
+                        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">1. Identity &amp; Personal Details</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="student_id" class="form-label fw-semibold">Student ID / Reg No <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="student_id" name="student_id" value="{{ student.student_id }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="roll_number" class="form-label fw-semibold">Examination Roll Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="roll_number" name="roll_number" value="{{ student.roll_number }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="student_name" class="form-label fw-semibold">Full Student Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="student_name" name="student_name" value="{{ student.student_name }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="email" class="form-label fw-semibold">Student Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" value="{{ student.email }}" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="phone_number" class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone_number" name="phone_number" value="{{ student.phone_number or '' }}">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="gender" class="form-label fw-semibold">Gender <span class="text-danger">*</span></label>
+                                <select class="form-select" id="gender" name="gender" required>
+                                    <option value="Male" {% if student.gender == 'Male' %}selected{% endif %}>Male</option>
+                                    <option value="Female" {% if student.gender == 'Female' %}selected{% endif %}>Female</option>
+                                    <option value="Other" {% if student.gender == 'Other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="date_of_birth" class="form-label fw-semibold">Date of Birth</label>
+                                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth" value="{{ student.date_of_birth or '' }}">
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">2. Academic Information</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="department" class="form-label fw-semibold">Department <span class="text-danger">*</span></label>
+                                <select class="form-select" id="department" name="department" required>
+                                    {% for dept in ['Computer Science and Engineering', 'Information Technology', 'Electronics and Communication', 'Mechanical Engineering', 'Civil Engineering'] %}
+                                        <option value="{{ dept }}" {% if student.department == dept %}selected{% endif %}>{{ dept }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="course" class="form-label fw-semibold">Course / Degree <span class="text-danger">*</span></label>
+                                <select class="form-select" id="course" name="course" required>
+                                    {% for c in ['B.Tech', 'B.Sc', 'BCA', 'M.Tech', 'MCA'] %}
+                                        <option value="{{ c }}" {% if student.course == c %}selected{% endif %}>{{ c }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="semester" class="form-label fw-semibold">Semester <span class="text-danger">*</span></label>
+                                <select class="form-select" id="semester" name="semester" required>
+                                    {% for s in range(1, 9) %}
+                                        <option value="{{ s }}" {% if student.semester == s %}selected{% endif %}>Semester {{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="academic_year" class="form-label fw-semibold">Academic Year <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="academic_year" name="academic_year" value="{{ student.academic_year }}" required>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">3. Residential Address</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label for="address" class="form-label fw-semibold">Permanent Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="2">{{ student.address or '' }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                            <a href="{{ url_for('view_students') }}" class="btn btn-light border px-4">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-4">Update Student Record</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

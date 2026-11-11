@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+
+{% block title %}Marksheet - {{ student.roll_number }} - Student Result Management System{% endblock %}
+
+{% block extra_css %}
+<style>
+/* Printable Marksheet Specific Styling */
+@media print {
+    /* Hide navigation bar, buttons, and footer when printing */
+    .project-navbar, .project-footer, .no-print, .student-alert {
+        display: none !important;
+    }
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-size: 12pt;
+    }
+    .marksheet-card {
+        border: 2px solid #000000 !important;
+        box-shadow: none !important;
+        padding: 20px !important;
+        margin: 0 !important;
+    }
+    .table-bordered th, .table-bordered td {
+        border: 1px solid #000000 !important;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Top Action Bar (hidden in print) -->
+    <div class="d-flex justify-content-between align-items-center mb-3 no-print">
+        <div>
+            <a href="{{ url_for('view_students') }}" class="btn btn-outline-secondary btn-sm">
+                &larr; Back to Students
+            </a>
+            <a href="{{ url_for('view_results') }}" class="btn btn-outline-secondary btn-sm ms-1">
+                View All Results
+            </a>
+        </div>
+        <div class="d-flex gap-2">
+            <button onclick="window.print();" class="btn btn-outline-primary btn-sm">
+                🖨️ Print Marksheet
+            </button>
+            <a href="{{ url_for('export_pdf', student_id=student._id) }}" class="btn btn-primary btn-sm">
+                📥 Download PDF Marksheet
+            </a>
+        </div>
+    </div>
+
+    <!-- Official Student Marksheet Card -->
+    <div class="card marksheet-card border p-4 shadow-sm bg-white">
+        <!-- University / College Header -->
+        <div class="text-center border-bottom pb-3 mb-3">
+            <h4 class="fw-bold text-primary mb-1">STUDENT RESULT MANAGEMENT SYSTEM</h4>
+            <h6 class="text-secondary fw-semibold mb-1">OFFICIAL STATEMENT OF MARKS / GRADE CARD</h6>
+            <p class="text-muted small mb-0">Examination Session: <b>{{ summary.exam_name }}</b> (Academic Year: {{ summary.academic_year or student.academic_year }})</p>
+        </div>
+
+        <!-- Student Metadata Grid -->
+        <div class="card bg-light border mb-4">
+            <div class="card-body p-3">
+                <div class="row g-2 small">
+                    <div class="col-sm-6 col-md-3">
+                        <span class="text-muted">Student Name:</span>
+                        <div class="fw-bold text-dark fs-6">{{ student.student_name }}</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <span class="text-muted">Examination Roll No:</span>
+                        <div class="fw-bold text-primary fs-6">{{ student.roll_number }}</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <span class="text-muted">Student ID / Reg No:</span>
+                        <div class="fw-semibold text-dark">{{ student.student_id }}</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3">
+                        <span class="text-muted">Department:</span>
+                        <div class="fw-semibold text-dark">{{ student.department }}</div>
+                    </div>
+
+                    <div class="col-sm-6 col-md-3 mt-2">
+                        <span class="text-muted">Degree / Course:</span>
+                        <div class="fw-semibold text-dark">{{ student.course }}</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 mt-2">
+                        <span class="text-muted">Semester:</span>
+                        <div class="fw-semibold text-dark">Semester {{ student.semester }}</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 mt-2">
+                        <span class="text-muted">Academic Year:</span>
+                        <div class="fw-semibold text-dark">{{ student.academic_year }}</div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 mt-2">
+                        <span class="text-muted">Date of Evaluation:</span>
+                        <div class="fw-semibold text-dark">{{ current_year }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subject Evaluation Table -->
+        <div class="table-responsive mb-3">
+            <table class="table table-bordered align-middle text-center mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 50px;">S.No</th>
+                        <th style="width: 120px;">Subject Code</th>
+                        <th class="text-start">Subject Title</th>
+                        <th style="width: 100px;">Max Marks</th>
+                        <th style="width: 100px;">Pass Marks</th>
+                        <th style="width: 120px;">Marks Obtained</th>
+                        <th style="width: 80px;">Grade</th>
+                        <th style="width: 90px;">Result</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in results %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td class="fw-semibold">{{ r.subject_code }}</td>
+                        <td class="text-start">{{ r.subject_name }}</td>
+                        <td>{{ r.max_marks }}</td>
+                        <td>{{ r.pass_marks }}</td>
+                        <td class="fw-bold">{{ r.marks_obtained }}</td>
+                        <td class="fw-bold">{{ r.grade }}</td>
+                        <td>
+                            {% if r.status == 'Pass' %}
+                                <span class="badge bg-success-subtle text-success border border-success-subtle">PASS</span>
+                            {% else %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">FAIL</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            No subject marks recorded for this examination session yet.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                {% if results %}
+                <tfoot class="table-light fw-bold">
+                    <tr>
+                        <td colspan="3" class="text-end">GRAND TOTAL:</td>
+                        <td>{{ summary.total_max }}</td>
+                        <td>-</td>
+                        <td class="text-primary">{{ summary.total_obtained }}</td>
+                        <td>{{ summary.overall_grade or summary.grade }}</td>
+                        <td>
+                            {% if (summary.overall_status or summary.status) == 'Pass' %}
+                                <span class="text-success">PASS</span>
+                            {% else %}
+                                <span class="text-danger">FAIL</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tfoot>
+                {% endif %}
+            </table>
+        </div>
+
+        {% if results %}
+        <!-- Result Summary Box -->
+        <div class="row align-items-center border p-3 rounded bg-light mb-4">
+            <div class="col-md-3 text-center border-end">
+                <span class="text-muted small">Aggregate Percentage</span>
+                <h4 class="fw-bold text-primary mb-0">{{ summary.overall_percentage or summary.percentage }}%</h4>
+            </div>
+            <div class="col-md-3 text-center border-end">
+                <span class="text-muted small">Cumulative Letter Grade</span>
+                <h4 class="fw-bold text-dark mb-0">{{ summary.overall_grade or summary.grade }}</h4>
+            </div>
+            <div class="col-md-3 text-center border-end">
+                <span class="text-muted small">Final Result Status</span>
+                <h4 class="fw-bold {% if (summary.overall_status or summary.status) == 'Pass' %}text-success{% else %}text-danger{% endif %} mb-0">
+                    {{ (summary.overall_status or summary.status) | upper }}
+                </h4>
+            </div>
+            <div class="col-md-3 text-center">
+                <span class="text-muted small">Subjects Cleared</span>
+                <h5 class="fw-bold text-dark mb-0">
+                    {{ results | selectattr('status', 'equalto', 'Pass') | list | length }} / {{ results | length }}
+                </h5>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Grading Legend -->
+        <div class="card border-0 bg-transparent mb-4">
+            <div class="card-body p-0 small text-muted">
+                <b>Grading Scale:</b>
+                A+ (90-100% Outstanding) &bull;
+                A (80-89% Excellent) &bull;
+                B+ (70-79% Very Good) &bull;
+                B (60-69% Good) &bull;
+                C (50-59% Average) &bull;
+                P (40-49% Pass) &bull;
+                F (&lt;40% Fail)
+            </div>
+        </div>
+
+        <!-- Official Signatures Row (for authentic academic look) -->
+        <div class="row mt-5 pt-4 text-center border-top">
+            <div class="col-4">
+                <div class="border-top pt-2 mx-3 small fw-semibold text-muted">Prepared By (Staff)</div>
+            </div>
+            <div class="col-4">
+                <div class="border-top pt-2 mx-3 small fw-semibold text-muted">Verified By (HOD)</div>
+            </div>
+            <div class="col-4">
+                <div class="border-top pt-2 mx-3 small fw-semibold text-muted">Controller of Examinations</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

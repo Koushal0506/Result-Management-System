@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Reports - Student Result Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">Examination Reports &amp; Exports</h4>
+            <p class="text-muted small mb-0">Generate institutional performance reports, CSV spreadsheets, and printable documents</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            &larr; Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Export Panels Grid -->
+    <div class="row g-4 mb-4">
+        <!-- 1. CSV Data Export Panel -->
+        <div class="col-lg-6">
+            <div class="card border shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="fw-bold mb-0 text-primary">📊 Export Filtered Results to CSV</h6>
+                    <p class="text-muted small mb-0">Download raw evaluation records as an Excel-compatible spreadsheet</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="GET" action="{{ url_for('export_csv') }}">
+                        <div class="mb-3">
+                            <label for="csv_exam" class="form-label small fw-semibold">Filter by Examination Session</label>
+                            <select class="form-select form-select-sm" id="csv_exam" name="exam_id">
+                                <option value="">-- All Examinations --</option>
+                                {% for ex in examinations %}
+                                    <option value="{{ ex.id }}">{{ ex.exam_name }} (Sem {{ ex.semester }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="csv_dept" class="form-label small fw-semibold">Filter by Department</label>
+                            <select class="form-select form-select-sm" id="csv_dept" name="department">
+                                <option value="">-- All Departments --</option>
+                                {% for dept in departments %}
+                                    <option value="{{ dept }}">{{ dept }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="csv_status" class="form-label small fw-semibold">Filter by Pass / Fail Status</label>
+                            <select class="form-select form-select-sm" id="csv_status" name="status">
+                                <option value="">-- All (Pass &amp; Fail) --</option>
+                                <option value="Pass">Pass Only</option>
+                                <option value="Fail">Fail Only</option>
+                            </select>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success py-2 fw-semibold">
+                                📥 Download Results (.CSV)
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Individual PDF Marksheet Generator -->
+        <div class="col-lg-6">
+            <div class="card border shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h6 class="fw-bold mb-0 text-primary">📄 Official PDF Marksheet Generator</h6>
+                    <p class="text-muted small mb-0">Generate university-formatted PDF grade cards for individual students</p>
+                </div>
+                <div class="card-body p-4">
+                    <p class="small text-muted mb-3">
+                        PDF marksheets contain university header, student metadata, subject scores, percentages, letter grades, and official signature sections.
+                    </p>
+                    <div class="alert alert-light border small text-muted">
+                        <b>How to export PDF:</b><br>
+                        1. Visit the <a href="{{ url_for('view_students') }}" class="fw-semibold text-decoration-none">Students List</a> or <a href="{{ url_for('view_results') }}" class="fw-semibold text-decoration-none">Results List</a>.<br>
+                        2. Click on the <b>Marksheet</b> button for any student.<br>
+                        3. Click <b>"Download PDF Marksheet"</b> to export using ReportLab or <b>"Print Marksheet"</b> for browser print.
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('view_students') }}" class="btn btn-outline-primary flex-grow-1 py-2 fw-semibold">
+                            Browse Students List &rarr;
+                        </a>
+                        <a href="{{ url_for('view_results') }}" class="btn btn-outline-secondary flex-grow-1 py-2 fw-semibold">
+                            Browse Results List &rarr;
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Performance Summary Table -->
+    <div class="card border shadow-sm">
+        <div class="card-header bg-white border-bottom py-2">
+            <h6 class="fw-bold mb-0">Examination Session Directory</h6>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle mb-0 student-table">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Exam Session Title</th>
+                        <th>Semester</th>
+                        <th>Academic Year</th>
+                        <th>Status</th>
+                        <th class="text-center" style="width: 150px;">Export CSV</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ex in examinations %}
+                    <tr>
+                        <td class="text-muted small">{{ loop.index }}</td>
+                        <td class="fw-semibold text-primary">{{ ex.exam_name }}</td>
+                        <td>Semester {{ ex.semester }}</td>
+                        <td>{{ ex.academic_year }}</td>
+                        <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle">Active</span></td>
+                        <td class="text-center">
+                            <a href="{{ url_for('export_csv', exam_id=ex.id) }}" class="btn btn-sm btn-outline-success">
+                                📥 CSV Report
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-3">No examinations recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Add Student - Student Result Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <div>
+                    <h4 class="fw-bold mb-0">Enroll New Student</h4>
+                    <p class="text-muted small mb-0">Add student profile and academic details into MySQL</p>
+                </div>
+                <a href="{{ url_for('view_students') }}" class="btn btn-outline-secondary btn-sm">
+                    &larr; Back to Students List
+                </a>
+            </div>
+
+            <div class="card border shadow-sm">
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('add_student') }}">
+                        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">1. Identity &amp; Personal Details</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="student_id" class="form-label fw-semibold">Student ID / Reg No <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="student_id" name="student_id" required placeholder="e.g. STU-2023-0101">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="roll_number" class="form-label fw-semibold">Examination Roll Number <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="roll_number" name="roll_number" required placeholder="e.g. 23CS101">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="student_name" class="form-label fw-semibold">Full Student Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="student_name" name="student_name" required placeholder="e.g. Ananya Sharma">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="email" class="form-label fw-semibold">Student Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" required placeholder="ananya@college.edu">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="phone_number" class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone_number" name="phone_number" placeholder="e.g. 9876543210">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="gender" class="form-label fw-semibold">Gender <span class="text-danger">*</span></label>
+                                <select class="form-select" id="gender" name="gender" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="date_of_birth" class="form-label fw-semibold">Date of Birth</label>
+                                <input type="date" class="form-control" id="date_of_birth" name="date_of_birth">
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">2. Academic Information</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-4">
+                                <label for="department" class="form-label fw-semibold">Department <span class="text-danger">*</span></label>
+                                <select class="form-select" id="department" name="department" required>
+                                    <option value="Computer Science and Engineering" selected>Computer Science and Engineering</option>
+                                    <option value="Information Technology">Information Technology</option>
+                                    <option value="Electronics and Communication">Electronics and Communication</option>
+                                    <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                    <option value="Civil Engineering">Civil Engineering</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="course" class="form-label fw-semibold">Course / Degree <span class="text-danger">*</span></label>
+                                <select class="form-select" id="course" name="course" required>
+                                    <option value="B.Tech" selected>B.Tech</option>
+                                    <option value="B.Sc">B.Sc</option>
+                                    <option value="BCA">BCA</option>
+                                    <option value="M.Tech">M.Tech</option>
+                                    <option value="MCA">MCA</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="semester" class="form-label fw-semibold">Semester <span class="text-danger">*</span></label>
+                                <select class="form-select" id="semester" name="semester" required>
+                                    <option value="1">Semester 1</option>
+                                    <option value="2">Semester 2</option>
+                                    <option value="3">Semester 3</option>
+                                    <option value="4">Semester 4</option>
+                                    <option value="5" selected>Semester 5</option>
+                                    <option value="6">Semester 6</option>
+                                    <option value="7">Semester 7</option>
+                                    <option value="8">Semester 8</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="academic_year" class="form-label fw-semibold">Academic Year <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="academic_year" name="academic_year" value="2025-2026" required placeholder="e.g. 2025-2026">
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-primary mb-3 border-bottom pb-2">3. Residential Address</h6>
+                        <div class="row g-3 mb-4">
+                            <div class="col-12">
+                                <label for="address" class="form-label fw-semibold">Permanent Address</label>
+                                <textarea class="form-control" id="address" name="address" rows="2" placeholder="Street, City, State, PIN Code"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-2 border-top pt-3">
+                            <a href="{{ url_for('view_students') }}" class="btn btn-light border px-4">Cancel</a>
+                            <button type="submit" class="btn btn-primary px-4">Save Student Record</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

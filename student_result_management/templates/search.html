@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Search Records - Student Result Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">Search &amp; Filter Directory</h4>
+            <p class="text-muted small mb-0">Unified search across student profiles, examination results, and marksheets</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            &larr; Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Main Search Card -->
+    <div class="card border shadow-sm mb-4">
+        <div class="card-body p-4">
+            <form method="GET" action="{{ url_for('search_page') }}">
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <label for="q" class="form-label small fw-semibold">Search Keywords</label>
+                        <input type="text" class="form-control" id="q" name="q" value="{{ query_text }}" placeholder="Enter Student Name, Roll No, or Subject...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="department" class="form-label small fw-semibold">Department</label>
+                        <select class="form-select" id="department" name="department">
+                            <option value="">All Departments</option>
+                            {% for dept in departments %}
+                                <option value="{{ dept }}" {% if filter_dept == dept %}selected{% endif %}>{{ dept }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="semester" class="form-label small fw-semibold">Semester</label>
+                        <select class="form-select" id="semester" name="semester">
+                            <option value="">All Semesters</option>
+                            {% for s in range(1, 9) %}
+                                <option value="{{ s }}" {% if filter_sem == s|string %}selected{% endif %}>Semester {{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="status" class="form-label small fw-semibold">Result Status</label>
+                        <select class="form-select" id="status" name="status">
+                            <option value="">All Status</option>
+                            <option value="Pass" {% if filter_status == 'Pass' %}selected{% endif %}>Pass</option>
+                            <option value="Fail" {% if filter_status == 'Fail' %}selected{% endif %}>Fail</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-3">
+                    {% if query_text or filter_dept or filter_sem or filter_status %}
+                        <a href="{{ url_for('search_page') }}" class="btn btn-outline-secondary btn-sm px-3">Reset</a>
+                    {% endif %}
+                    <button type="submit" class="btn btn-primary btn-sm px-4 fw-semibold">Search Database</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Search Results Section -->
+    <div class="row g-4">
+        <!-- Matching Students -->
+        <div class="col-12">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-primary">Student Matches ({{ students|length }})</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0 student-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Roll No</th>
+                                <th>Student Name</th>
+                                <th>Student ID</th>
+                                <th>Department</th>
+                                <th>Course</th>
+                                <th>Semester</th>
+                                <th class="text-center" style="width: 160px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for s in students %}
+                            <tr>
+                                <td class="fw-bold text-primary">{{ s.roll_number }}</td>
+                                <td class="fw-semibold">{{ s.student_name }}</td>
+                                <td class="small">{{ s.student_id }}</td>
+                                <td class="small">{{ s.department }}</td>
+                                <td>{{ s.course }}</td>
+                                <td>Sem {{ s.semester }}</td>
+                                <td class="text-center">
+                                    <a href="{{ url_for('view_marksheet', student_id=s.id) }}" class="btn btn-sm btn-outline-success">
+                                        Marksheet
+                                    </a>
+                                    <a href="{{ url_for('update_student', id=s.id) }}" class="btn btn-sm btn-outline-primary">
+                                        Edit
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-3">
+                                    No student profiles matched your search criteria.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matching Examination Results -->
+        <div class="col-12">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0 text-primary">Result &amp; Mark Matches ({{ results|length }})</h6>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0 student-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Roll No</th>
+                                <th>Student Name</th>
+                                <th>Subject</th>
+                                <th>Exam</th>
+                                <th>Marks</th>
+                                <th>Grade</th>
+                                <th>Status</th>
+                                <th class="text-center" style="width: 110px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in results %}
+                            <tr>
+                                <td class="fw-bold">{{ r.roll_number }}</td>
+                                <td>{{ r.student_name }}</td>
+                                <td class="small">{{ r.subject_code }} - {{ r.subject_name }}</td>
+                                <td class="small text-muted">{{ r.exam_name }}</td>
+                                <td><b>{{ r.marks_obtained }}</b> / {{ r.max_marks }}</td>
+                                <td class="fw-bold">{{ r.grade }}</td>
+                                <td>
+                                    {% if r.status == 'Pass' %}
+                                        <span class="badge bg-success-subtle text-success border border-success-subtle">Pass</span>
+                                    {% else %}
+                                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Fail</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{ url_for('view_marksheet', student_id=r.student_id, exam_id=r.exam_id) }}" class="btn btn-sm btn-outline-success">
+                                        Marksheet
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="text-center text-muted py-3">
+                                    No subject results matched your search criteria.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

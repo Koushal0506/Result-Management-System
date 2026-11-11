@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Faculty - Student Result Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">College Faculty Directory</h4>
+            <p class="text-muted small mb-0">Administrator Portal: Manage authorized faculty and evaluation staff</p>
+        </div>
+        <div>
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-sm">
+                + Register New Faculty
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm ms-1">
+                &larr; Dashboard
+            </a>
+        </div>
+    </div>
+
+    <div class="card border shadow-sm">
+        <div class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
+            <span class="small fw-semibold text-muted">Registered Faculty: <b>{{ faculty_list|length }}</b></span>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle mb-0 student-table">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 50px;">#</th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th class="text-center" style="width: 100px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fac in faculty_list %}
+                    <tr>
+                        <td class="text-muted small">{{ loop.index }}</td>
+                        <td class="fw-bold text-primary">{{ fac.username }}</td>
+                        <td class="fw-semibold">{{ fac.full_name }}</td>
+                        <td class="small">{{ fac.email }}</td>
+                        <td>
+                            {% if fac.role == 'admin' %}
+                                <span class="badge bg-danger-subtle text-danger border border-danger-subtle">Admin</span>
+                            {% else %}
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">Faculty</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            {% if fac._id|string == session.get('user_id') %}
+                                <span class="text-muted small">Current User</span>
+                            {% else %}
+                                <form method="POST" action="{{ url_for('delete_faculty', id=fac._id) }}" class="d-inline" onsubmit="return confirm('Remove faculty account {{ fac.full_name }} ({{ fac.username }})?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2">Remove</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">No faculty members found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Subjects - Student Result Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">Subject &amp; Course Master</h4>
+            <p class="text-muted small mb-0">Configure semester subjects, maximum marks, and minimum passing threshold</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">
+            &larr; Back to Dashboard
+        </a>
+    </div>
+
+    <div class="row g-4">
+        <!-- Add Subject Form -->
+        <div class="col-lg-4">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-white border-bottom py-2">
+                    <h6 class="fw-bold mb-0 text-primary">+ Add New Subject</h6>
+                </div>
+                <div class="card-body p-3">
+                    <form method="POST" action="{{ url_for('manage_subjects') }}">
+                        <div class="mb-2">
+                            <label for="subject_code" class="form-label small fw-semibold">Subject Code <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="subject_code" name="subject_code" required placeholder="e.g. CS501" style="text-transform:uppercase;">
+                        </div>
+                        <div class="mb-2">
+                            <label for="subject_name" class="form-label small fw-semibold">Subject Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control form-control-sm" id="subject_name" name="subject_name" required placeholder="e.g. Database Management Systems">
+                        </div>
+                        <div class="mb-2">
+                            <label for="department" class="form-label small fw-semibold">Department <span class="text-danger">*</span></label>
+                            <select class="form-select form-select-sm" id="department" name="department" required>
+                                <option value="Computer Science and Engineering" selected>Computer Science and Engineering</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics and Communication">Electronics and Communication</option>
+                                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                                <option value="Civil Engineering">Civil Engineering</option>
+                            </select>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label for="semester" class="form-label small fw-semibold">Semester <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-sm" id="semester" name="semester" required>
+                                    {% for s in range(1, 9) %}
+                                        <option value="{{ s }}" {% if s == 5 %}selected{% endif %}>Sem {{ s }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <label for="max_marks" class="form-label small fw-semibold">Max Marks <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control form-control-sm" id="max_marks" name="max_marks" value="100" min="10" max="1000" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="pass_marks" class="form-label small fw-semibold">Pass Marks Threshold <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control form-control-sm" id="pass_marks" name="pass_marks" value="40" min="5" max="1000" required>
+                            <div class="form-text small">Passing mark standard for this subject.</div>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-sm">Save Subject</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subjects List Table -->
+        <div class="col-lg-8">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-white border-bottom py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="fw-bold mb-0">Registered Subjects</h6>
+                    <span class="badge bg-light text-dark border">{{ subjects|length }} Total</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover align-middle mb-0 student-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Code</th>
+                                <th>Subject Name</th>
+                                <th>Department</th>
+                                <th>Sem</th>
+                                <th>Max</th>
+                                <th>Pass</th>
+                                <th class="text-center" style="width: 70px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for sub in subjects %}
+                            <tr>
+                                <td class="fw-bold text-primary">{{ sub.subject_code }}</td>
+                                <td>{{ sub.subject_name }}</td>
+                                <td class="small">{{ sub.department }}</td>
+                                <td>Sem {{ sub.semester }}</td>
+                                <td>{{ sub.max_marks }}</td>
+                                <td>{{ sub.pass_marks }}</td>
+                                <td class="text-center">
+                                    <form method="POST" action="{{ url_for('delete_subject', id=sub._id) }}" class="d-inline" onsubmit="return confirm('Delete subject {{ sub.subject_code }}?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger py-0 px-2">Del</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center text-muted py-3">No subjects created yet.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

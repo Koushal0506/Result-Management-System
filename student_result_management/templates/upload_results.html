@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Upload Results - Student Result Management System{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h4 class="fw-bold mb-0">Easy Result Upload Portal</h4>
+            <p class="text-muted small mb-0">Upload student results in bulk via CSV or fill semester marks in one table</p>
+        </div>
+        <div>
+            <a href="{{ url_for('view_results') }}" class="btn btn-outline-secondary btn-sm">
+                &larr; View Results List
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Option 1: Quick Semester Marks Table -->
+        <div class="col-lg-7">
+            <div class="card border shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="fw-bold mb-0 text-primary">⚡ Quick Semester Marks Entry</h5>
+                    <p class="text-muted small mb-0">Enter marks for all subjects of a student in one form</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('upload_results') }}">
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label for="student_id" class="form-label fw-semibold">Select Student <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-sm" id="student_id" name="student_id" required>
+                                    <option value="" disabled selected>-- Choose Student (Roll No) --</option>
+                                    {% for s in students %}
+                                        <option value="{{ s._id }}">
+                                            {{ s.roll_number }} - {{ s.student_name }} (Sem {{ s.semester }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="exam_id" class="form-label fw-semibold">Examination Session <span class="text-danger">*</span></label>
+                                <select class="form-select form-select-sm" id="exam_id" name="exam_id" required>
+                                    <option value="" disabled selected>-- Choose Examination --</option>
+                                    {% for e in examinations %}
+                                        <option value="{{ e._id }}">
+                                            {{ e.exam_name }} (Sem {{ e.semester }})
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold text-dark mt-4 mb-2">Enter Subject Marks:</h6>
+                        <div class="table-responsive mb-3">
+                            <table class="table table-bordered table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Subject Name</th>
+                                        <th style="width: 80px;">Max</th>
+                                        <th style="width: 80px;">Pass</th>
+                                        <th style="width: 120px;">Marks Obtained</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for sub in subjects %}
+                                    <tr>
+                                        <td class="fw-bold">{{ sub.subject_code }}</td>
+                                        <td class="small">{{ sub.subject_name }}</td>
+                                        <td>{{ sub.max_marks }}</td>
+                                        <td>{{ sub.pass_marks }}</td>
+                                        <td>
+                                            <input type="number" step="0.5" class="form-control form-control-sm" name="marks_{{ sub.subject_code }}" placeholder="e.g. 75" min="0" max="{{ sub.max_marks }}">
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary fw-semibold">
+                                ✔ Save All Subject Marks
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Option 2: Bulk CSV File Upload -->
+        <div class="col-lg-5">
+            <div class="card border shadow-sm h-100">
+                <div class="card-header bg-white border-bottom py-3">
+                    <h5 class="fw-bold mb-0 text-success">📁 Bulk Upload Results via CSV</h5>
+                    <p class="text-muted small mb-0">Upload an entire batch of results using a spreadsheet file</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('upload_results') }}" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="csv_file" class="form-label fw-semibold">Select CSV File <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control form-control-sm" id="csv_file" name="csv_file" accept=".csv" required>
+                        </div>
+
+                        <div class="alert alert-light border small text-muted mb-3">
+                            <b>CSV File Format:</b><br>
+                            Your CSV must contain columns:
+                            <code>roll_number, subject_code, exam_name, marks_obtained</code>
+                        </div>
+
+                        <div class="mb-4 text-center">
+                            <a href="{{ url_for('download_sample_csv') }}" class="btn btn-outline-secondary btn-sm">
+                                📥 Download Sample CSV Template
+                            </a>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success fw-semibold">
+                                📤 Upload and Import CSV
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

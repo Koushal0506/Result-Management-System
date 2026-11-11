@@ -1,0 +1,206 @@
+/* ==============================================================================
+   Student Result Management System - Custom Stylesheet
+   Designed with clean, practical, realistic college project aesthetics:
+   - Light background (#f4f7fc)
+   - Professional Blue & White color palette (#1a56db, #0d6efd, #ffffff)
+   - Clear bordered tables, normal-sized headings, and clean form inputs
+   ============================================================================== */
+
+:root {
+    --primary-blue: #1a56db;
+    --primary-hover: #1646b0;
+    --navy-dark: #0f274a;
+    --light-bg: #f4f7fc;
+    --card-bg: #ffffff;
+    --border-color: #d1d9e6;
+    --table-border: #cbd5e1;
+    --text-primary: #1e293b;
+    --text-muted: #64748b;
+    --success-green: #15803d;
+    --danger-red: #b91c1c;
+}
+
+body {
+    background-color: var(--light-bg);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-wrapper {
+    flex: 1 0 auto;
+}
+
+/* ------------------------------------------------------------------------------
+   1. Navigation Bar
+   ------------------------------------------------------------------------------ */
+.project-navbar {
+    background-color: var(--primary-blue);
+    border-bottom: 2px solid #1442a8;
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+}
+
+.brand-badge {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    font-size: 0.8rem;
+    padding: 3px 7px;
+    border-radius: 4px;
+    margin-right: 6px;
+    letter-spacing: 0.5px;
+}
+
+.project-navbar .nav-link {
+    color: #e2e8f0 !important;
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.45rem 0.8rem !important;
+    border-radius: 4px;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.project-navbar .nav-link:hover,
+.project-navbar .nav-link:focus {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ------------------------------------------------------------------------------
+   2. Cards & Headings
+   ------------------------------------------------------------------------------ */
+.hero-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color) !important;
+    border-left: 4px solid var(--primary-blue) !important;
+    border-radius: 6px;
+}
+
+.auth-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    transition: transform 0.1s ease-in-out;
+}
+
+.stat-card:hover {
+    border-color: #93c5fd;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--navy-dark);
+    font-weight: 600;
+}
+
+/* ------------------------------------------------------------------------------
+   3. Forms & Buttons
+   ------------------------------------------------------------------------------ */
+.form-control, .form-select {
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    padding: 0.45rem 0.65rem;
+    background-color: #ffffff;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.15rem rgba(26, 86, 219, 0.2);
+}
+
+.form-label {
+    font-size: 0.88rem;
+    margin-bottom: 0.25rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    font-weight: 500;
+    border-radius: 4px;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+.btn-outline-primary {
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    color: #ffffff;
+}
+
+/* ------------------------------------------------------------------------------
+   4. Tables (Clear borders and proper spacing)
+   ------------------------------------------------------------------------------ */
+.student-table {
+    border: 1px solid var(--table-border);
+    font-size: 0.92rem;
+}
+
+.student-table thead th {
+    background-color: #eef2f8;
+    color: var(--navy-dark);
+    font-weight: 600;
+    border-bottom: 2px solid var(--table-border);
+    padding: 0.65rem 0.75rem;
+    white-space: nowrap;
+}
+
+.student-table tbody td {
+    border-color: var(--table-border);
+    padding: 0.6rem 0.75rem;
+    vertical-align: middle;
+}
+
+.student-table tbody tr:nth-of-type(even) {
+    background-color: #fbfcfe;
+}
+
+/* ------------------------------------------------------------------------------
+   5. Alerts & Badges
+   ------------------------------------------------------------------------------ */
+.student-alert {
+    border-radius: 4px;
+    font-size: 0.92rem;
+    border-width: 1px;
+}
+
+.badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 4px;
+}
+
+/* ------------------------------------------------------------------------------
+   6. Marksheet Layout
+   ------------------------------------------------------------------------------ */
+.marksheet-card {
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+}
+
+/* ------------------------------------------------------------------------------
+   7. Footer
+   ------------------------------------------------------------------------------ */
+.project-footer {
+    background-color: #e9eef5;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
