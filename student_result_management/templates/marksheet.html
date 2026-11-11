@@ -33,15 +33,21 @@
     <!-- Top Action Bar (hidden in print) -->
     <div class="d-flex justify-content-between align-items-center mb-3 no-print">
         <div>
-            <a href="{{ url_for('view_students') }}" class="btn btn-outline-secondary btn-sm">
-                &larr; Back to Students
-            </a>
-            <a href="{{ url_for('view_results') }}" class="btn btn-outline-secondary btn-sm ms-1">
-                View All Results
-            </a>
+            {% if logged_in %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary btn-sm">
+                    &larr; Admin Dashboard
+                </a>
+                <a href="{{ url_for('view_results') }}" class="btn btn-outline-secondary btn-sm ms-1">
+                    All Results
+                </a>
+            {% else %}
+                <a href="{{ url_for('index') }}" class="btn btn-outline-primary btn-sm fw-semibold">
+                    &larr; Check Another Result
+                </a>
+            {% endif %}
         </div>
         <div class="d-flex gap-2">
-            <button onclick="window.print();" class="btn btn-outline-primary btn-sm">
+            <button onclick="window.print();" class="btn btn-outline-secondary btn-sm">
                 🖨️ Print Marksheet
             </button>
             <a href="{{ url_for('export_pdf', student_id=student._id) }}" class="btn btn-primary btn-sm">

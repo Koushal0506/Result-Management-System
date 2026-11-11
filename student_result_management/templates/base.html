@@ -15,23 +15,16 @@
     <!-- Main Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-dark project-navbar shadow-sm">
         <div class="container-fluid px-4">
-            {% if logged_in %}
+            {% if is_admin_page and logged_in %}
+                <!-- BACKEND ADMIN PANEL NAVIGATION (Visible ONLY inside backend after login) -->
                 <a class="navbar-brand fw-bold" href="{{ url_for('dashboard') }}">
                     <span class="brand-badge bg-danger">ADMIN</span> Result Management System
                 </a>
-            {% else %}
-                <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
-                    <span class="brand-badge">🎓 SRMS</span> College Result Portal
-                </a>
-            {% endif %}
-
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#projectNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="projectNav">
-                <ul class="navbar-nav ms-auto align-items-center">
-                    {% if logged_in %}
-                        <!-- Admin Only Navigation Items -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#projectNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="projectNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url_for('dashboard') }}">📊 Dashboard</a>
                         </li>
@@ -63,26 +56,54 @@
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                 <li><span class="dropdown-item-text text-muted small">Signed in as <b>{{ current_username }}</b></span></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('index') }}" target="_blank">🎓 Open Student Portal</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('index') }}">🎓 View Student Portal</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('register') }}">➕ Register New Faculty</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('manage_faculty') }}">👥 Faculty Directory</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger fw-semibold" href="{{ url_for('logout') }}">🚪 Logout</a></li>
                             </ul>
                         </li>
-                    {% else %}
-                        <!-- Public Student Navigation Items -->
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-sm btn-danger fw-semibold px-3" href="{{ url_for('logout') }}">
+                                🚪 Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            {% else %}
+                <!-- OUTSIDE STUDENT PORTAL (Strictly Result Checking Only) -->
+                <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
+                    <span class="brand-badge">🎓 SRMS</span> College Result Portal
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#projectNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="projectNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
                         <li class="nav-item">
                             <a class="nav-link fw-semibold text-white" href="{{ url_for('index') }}">🔍 Check Result</a>
                         </li>
-                        <li class="nav-item ms-lg-3">
-                            <a class="btn btn-outline-light btn-sm px-3 fw-semibold shadow-sm" href="{{ url_for('admin_login') }}">
-                                🔒 Admin Login
-                            </a>
-                        </li>
-                    {% endif %}
-                </ul>
-            </div>
+                        {% if logged_in %}
+                            <li class="nav-item ms-lg-3">
+                                <a class="btn btn-warning btn-sm px-3 fw-bold shadow-sm" href="{{ url_for('dashboard') }}">
+                                    ⚙️ Go to Admin Panel &rarr;
+                                </a>
+                            </li>
+                            <li class="nav-item ms-2">
+                                <a class="btn btn-outline-light btn-sm px-2" href="{{ url_for('logout') }}">
+                                    Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item ms-lg-3">
+                                <a class="btn btn-outline-light btn-sm px-3 fw-semibold shadow-sm" href="{{ url_for('admin_login') }}">
+                                    🔒 Admin Login
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </nav>
 

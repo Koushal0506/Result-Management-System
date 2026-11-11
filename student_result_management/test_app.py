@@ -20,12 +20,11 @@ class StudentResultSystemTests(unittest.TestCase):
     def test_routes_accessible(self):
         self.assertEqual(self.client.get('/').status_code, 200)
         self.assertEqual(self.client.get('/login').status_code, 200)
-        self.assertEqual(self.client.get('/register').status_code, 200)
         self.assertEqual(self.client.get('/check-result').status_code, 200)
         self.assertEqual(self.client.get('/health').status_code, 200)
 
     def test_login_required(self):
-        for url in ['/dashboard', '/students', '/students/add', '/results', '/results/add', '/upload-results', '/reports']:
+        for url in ['/dashboard', '/students', '/students/add', '/results', '/results/add', '/upload-results', '/reports', '/register', '/faculty']:
             res = self.client.get(url)
             self.assertEqual(res.status_code, 302, f"{url} should redirect when not logged in")
 

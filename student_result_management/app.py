@@ -9,19 +9,35 @@ from database import get_db, check_connection
 app = Flask(__name__)
 app.config.from_object(Config)
 
+@app.context_processor
+def inject_user():
+    admin_endpoints = {'dashboard', 'view_students', 'add_student', 'update_student',
+                       'manage_subjects', 'manage_examinations', 'view_results', 'add_result',
+                       'upload_results', 'reports', 'manage_faculty', 'register'}
+    return {
+        'logged_in': 'user_id' in session,
+        'is_admin_page': request.endpoint in admin_endpoints if request.endpoint else False,
+        'current_user': session.get('username'),
+        'current_username': session.get('username'),
+        'current_full_name': session.get('full_name'),
+        'current_role': session.get('role', 'admin')
+    }
+
 def login_required(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         if 'user_id' not in session:
-            flash('Please login first.', 'warning')
-            return redirect(url_for('login'))
+            flash('Access Restricted: Only College Administrators & Faculty can access backend management features. Students can only check results on the public portal.', 'warning')
+            return redirect(url_for('admin_login'))
         return f(*args, **kwargs)
     return wrapper
 
 @app.route('/')
 def index():
-    ok, msg = check_connection()
-    return render_template('index.html', db_connected=ok, db_message=msg)
+    db = get_db()
+    try: exams = list(db.examinations.find().sort('_id', -1))
+    except Exception: exams = []
+    return render_template('index.html', examinations=exams)
 
 @app.route('/check-result', methods=['GET', 'POST'])
 def check_result():
@@ -31,9 +47,11 @@ def check_result():
         student = db.students.find_one({"roll_number": {"$regex": f"^{roll}$", "$options": "i"}})
         if not student:
             flash(f"No student record found with Roll Number '{roll}'. Please verify.", "danger")
-            return redirect(url_for('check_result'))
+            return redirect(url_for('index'))
         return redirect(url_for('view_marksheet', student_id=str(student['_id'])))
-    return render_template('check_result.html', examinations=list(db.examinations.find()))
+    try: exams = list(db.examinations.find().sort('_id', -1))
+    except Exception: exams = []
+    return render_template('index.html', examinations=exams)
 
 @app.route('/health')
 def health():
@@ -49,7 +67,7 @@ def register():
     # Restrict registration to logged-in admin (unless no users exist yet)
     if not is_initial_setup and 'user_id' not in session:
         flash('Registration is restricted. Only an administrator can register faculty accounts.', 'warning')
-        return redirect(url_for('login'))
+        return redirect(url_for('admin_login'))
 
     if request.method == 'POST':
         u, f, e = request.form['username'].strip(), request.form['full_name'].strip(), request.form['email'].strip().lower()
@@ -64,7 +82,7 @@ def register():
             db.users.insert_one({"username": u, "full_name": f, "email": e, "password_hash": generate_password_hash(p), "role": role})
             if is_initial_setup:
                 flash('Initial Admin account created! Please login.', 'success')
-                return redirect(url_for('login'))
+                return redirect(url_for('admin_login'))
             flash(f"Faculty account '{u}' registered successfully!", 'success')
             return redirect(url_for('manage_faculty'))
 
@@ -88,24 +106,37 @@ def delete_faculty(id):
         flash("Faculty account removed.", "info")
     return redirect(url_for('manage_faculty'))
 
+@app.route('/admin/login', methods=['GET', 'POST'])
 @app.route('/login', methods=['GET', 'POST'])
-def login():
+def admin_login():
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
     if request.method == 'POST':
         db = get_db()
-        ident, pwd = request.form['identity'], request.form['password']
-        user = db.users.find_one({"$or": [{"username": ident}, {"email": ident}]})
+        ident = request.form.get('identity', '').strip()
+        pwd = request.form.get('password', '')
+        user = db.users.find_one({"$or": [{"username": ident}, {"email": ident.lower()}]})
         if user and check_password_hash(user['password_hash'], pwd):
-            session['user_id'], session['username'], session['full_name'] = str(user['_id']), user['username'], user['full_name']
+            session['user_id'] = str(user['_id'])
+            session['username'] = user['username']
+            session['full_name'] = user.get('full_name', user['username'])
+            session['role'] = user.get('role', 'admin')
+            flash(f"Welcome back, {session['full_name']}! Signed into Admin Panel.", "success")
             return redirect(url_for('dashboard'))
         flash('Invalid username or password.', 'danger')
     return render_template('login.html')
 
+def login():
+    return admin_login()
+
+@app.route('/admin/logout')
 @app.route('/logout')
 def logout():
     session.clear()
     flash('Logged out successfully.', 'info')
-    return redirect(url_for('login'))
+    return redirect(url_for('admin_login'))
 
+@app.route('/admin')
 @app.route('/dashboard')
 @login_required
 def dashboard():
