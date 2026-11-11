@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>{% block title %}Student Result Management System{% endblock %}</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -10,93 +10,97 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100 bg-light">
 
     <!-- Main Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark project-navbar shadow-sm">
-        <div class="container-fluid px-4">
+    <nav class="navbar navbar-expand-lg navbar-dark project-navbar shadow-sm sticky-top">
+        <div class="container-fluid px-3 px-lg-4">
             {% if is_admin_page and logged_in %}
-                <!-- BACKEND ADMIN PANEL NAVIGATION (Visible ONLY inside backend after login) -->
-                <a class="navbar-brand fw-bold" href="{{ url_for('dashboard') }}">
-                    <span class="brand-badge bg-danger">ADMIN</span> Result Management System
+                <!-- BACKEND ADMIN PANEL NAVIGATION -->
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('dashboard') }}">
+                    <span class="badge bg-danger me-2">ADMIN</span>
+                    <span>Result Management System</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#projectNav">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#projectNav" aria-controls="projectNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="projectNav">
-                    <ul class="navbar-nav ms-auto align-items-center">
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('dashboard') }}">📊 Dashboard</a>
+                            <a class="nav-link {% if request.endpoint == 'dashboard' %}active fw-bold{% endif %}" href="{{ url_for('dashboard') }}">📊 Dashboard</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('view_students') }}">👨‍🎓 Students</a>
+                            <a class="nav-link {% if request.endpoint in ['view_students', 'add_student', 'update_student'] %}active fw-bold{% endif %}" href="{{ url_for('view_students') }}">👨‍🎓 Students</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-warning fw-bold" href="{{ url_for('upload_results') }}">⚡ Upload Results</a>
+                            <a class="nav-link text-warning fw-bold {% if request.endpoint == 'upload_results' %}active{% endif %}" href="{{ url_for('upload_results') }}">⚡ Upload Results</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('view_results') }}">📋 Results</a>
+                            <a class="nav-link {% if request.endpoint in ['view_results', 'add_result'] %}active fw-bold{% endif %}" href="{{ url_for('view_results') }}">📋 Results</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_subjects') }}">📚 Subjects</a>
+                            <a class="nav-link {% if request.endpoint == 'manage_subjects' %}active fw-bold{% endif %}" href="{{ url_for('manage_subjects') }}">📚 Subjects</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_examinations') }}">🗓️ Exams</a>
+                            <a class="nav-link {% if request.endpoint == 'manage_examinations' %}active fw-bold{% endif %}" href="{{ url_for('manage_examinations') }}">🗓️ Exams</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('reports') }}">📈 Reports</a>
+                            <a class="nav-link {% if request.endpoint == 'reports' %}active fw-bold{% endif %}" href="{{ url_for('reports') }}">📈 Reports</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('manage_faculty') }}">👥 Faculty</a>
+                            <a class="nav-link {% if request.endpoint in ['manage_faculty', 'register'] %}active fw-bold{% endif %}" href="{{ url_for('manage_faculty') }}">👥 Faculty</a>
                         </li>
-                        <li class="nav-item ms-lg-2 dropdown">
-                            <a class="nav-link dropdown-toggle text-white fw-semibold bg-dark-subtle px-3 py-1 rounded" href="#" role="button" data-bs-toggle="dropdown">
+                        <li class="nav-item ms-lg-2 dropdown my-1 my-lg-0">
+                            <a class="nav-link dropdown-toggle text-white fw-semibold bg-dark-subtle px-3 py-1 rounded" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 👤 {{ current_full_name or current_username }} <span class="badge bg-primary text-uppercase ms-1">{{ current_role }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm">
                                 <li><span class="dropdown-item-text text-muted small">Signed in as <b>{{ current_username }}</b></span></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('index') }}">🎓 View Student Portal</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('index') }}" target="_blank">🎓 Open Student Portal</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('register') }}">➕ Register New Faculty</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('manage_faculty') }}">👥 Faculty Directory</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item text-danger fw-semibold" href="{{ url_for('logout') }}">🚪 Logout</a></li>
                             </ul>
                         </li>
-                        <li class="nav-item ms-2">
-                            <a class="btn btn-sm btn-danger fw-semibold px-3" href="{{ url_for('logout') }}">
+                        <li class="nav-item ms-lg-2 my-1 my-lg-0">
+                            <a class="btn btn-sm btn-danger fw-semibold px-3 w-100 w-lg-auto" href="{{ url_for('logout') }}">
                                 🚪 Logout
                             </a>
                         </li>
                     </ul>
                 </div>
             {% else %}
-                <!-- OUTSIDE STUDENT PORTAL (Strictly Result Checking Only) -->
-                <a class="navbar-brand fw-bold" href="{{ url_for('index') }}">
-                    <span class="brand-badge">🎓 SRMS</span> College Result Portal
+                <!-- OUTSIDE PUBLIC STUDENT PORTAL -->
+                <a class="navbar-brand fw-bold d-flex align-items-center" href="{{ url_for('index') }}">
+                    <span class="brand-badge me-2">🎓 SRMS</span>
+                    <span>Student Result Portal</span>
                 </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#projectNav">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#projectNav" aria-controls="projectNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="projectNav">
-                    <ul class="navbar-nav ms-auto align-items-center">
+                    <ul class="navbar-nav ms-auto align-items-lg-center">
                         <li class="nav-item">
-                            <a class="nav-link fw-semibold text-white" href="{{ url_for('index') }}">🔍 Check Result</a>
+                            <a class="nav-link fw-semibold text-white active" href="{{ url_for('index') }}">
+                                🔍 Check Result
+                            </a>
                         </li>
                         {% if logged_in %}
-                            <li class="nav-item ms-lg-3">
-                                <a class="btn btn-warning btn-sm px-3 fw-bold shadow-sm" href="{{ url_for('dashboard') }}">
+                            <li class="nav-item ms-lg-3 my-1 my-lg-0">
+                                <a class="btn btn-warning btn-sm px-3 fw-bold shadow-sm w-100 w-lg-auto" href="{{ url_for('dashboard') }}">
                                     ⚙️ Go to Admin Panel &rarr;
                                 </a>
                             </li>
-                            <li class="nav-item ms-2">
-                                <a class="btn btn-outline-light btn-sm px-2" href="{{ url_for('logout') }}">
+                            <li class="nav-item ms-lg-2 my-1 my-lg-0">
+                                <a class="btn btn-outline-light btn-sm px-2 w-100 w-lg-auto" href="{{ url_for('logout') }}">
                                     Logout
                                 </a>
                             </li>
                         {% else %}
-                            <li class="nav-item ms-lg-3">
-                                <a class="btn btn-outline-light btn-sm px-3 fw-semibold shadow-sm" href="{{ url_for('admin_login') }}">
+                            <li class="nav-item ms-lg-3 my-1 my-lg-0">
+                                <a class="btn btn-outline-light btn-sm px-3 fw-semibold shadow-sm w-100 w-lg-auto" href="{{ url_for('admin_login') }}">
                                     🔒 Admin Login
                                 </a>
                             </li>
@@ -108,11 +112,11 @@
     </nav>
 
     <!-- Global Flash Alerts Container -->
-    <div class="container-fluid px-4 mt-3">
+    <div class="container-fluid px-3 px-md-4 mt-3">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show student-alert" role="alert">
+                    <div class="alert alert-{{ category }} alert-dismissible fade show student-alert shadow-sm" role="alert">
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
@@ -122,19 +126,54 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="main-wrapper">
+    <main class="main-wrapper flex-grow-1">
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Project Footer -->
-    <footer class="project-footer text-center py-3 mt-4 border-top">
-        <div class="container">
-            <p class="mb-1 text-muted small">
-                <b>Student Result Management System</b> &mdash; Third Year Computer Science Internship Project
-            </p>
-            <p class="mb-0 text-muted small">
-                Built with Python Flask, Jinja2, HTML5, CSS3, JavaScript &amp; MongoDB Atlas.
-            </p>
+    <!-- Enhanced Project Information Footer -->
+    <footer class="project-footer bg-white border-top mt-auto pt-4 pb-3">
+        <div class="container px-3 px-md-4">
+            <div class="row g-4">
+                <!-- Column 1: Project Information -->
+                <div class="col-12 col-md-5">
+                    <h6 class="fw-bold text-primary mb-2">🎓 Student Result Management System</h6>
+                    <p class="text-muted small mb-2">
+                        A web application engineered for college examination management, student semester mark compilation, automated grade determination, and instant downloadable statement of marks.
+                    </p>
+                    <span class="badge bg-light text-secondary border">3rd Year Computer Science Internship Project</span>
+                </div>
+
+                <!-- Column 2: Quick Links -->
+                <div class="col-6 col-md-3">
+                    <h6 class="fw-bold text-dark mb-2">Quick Navigation</h6>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-1"><a href="{{ url_for('index') }}" class="text-decoration-none text-muted">&bull; Check Result</a></li>
+                        <li class="mb-1"><a href="{{ url_for('admin_login') }}" class="text-decoration-none text-muted">&bull; Administrator Login</a></li>
+                        {% if logged_in %}
+                        <li class="mb-1"><a href="{{ url_for('dashboard') }}" class="text-decoration-none text-muted">&bull; Admin Dashboard</a></li>
+                        <li class="mb-1"><a href="{{ url_for('upload_results') }}" class="text-decoration-none text-muted">&bull; Upload Results</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <!-- Column 3: System Architecture -->
+                <div class="col-6 col-md-4">
+                    <h6 class="fw-bold text-dark mb-2">System Architecture</h6>
+                    <ul class="list-unstyled small text-muted mb-0">
+                        <li class="mb-1"><b>Backend:</b> Python 3.14 &bull; Flask</li>
+                        <li class="mb-1"><b>Database:</b> MongoDB Atlas Cloud Database</li>
+                        <li class="mb-1"><b>Frontend:</b> Jinja2, HTML5, CSS3, Bootstrap 5</li>
+                        <li class="mb-1"><b>Reporting:</b> ReportLab PDF &amp; CSV Engine</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Bottom Disclaimer & Academic Metadata -->
+            <div class="border-top mt-3 pt-3 text-center">
+                <p class="text-muted small mb-0">
+                    &copy; 2025-2026 Student Result Management System &bull; Designed for College Academic Examination &amp; Evaluation
+                </p>
+            </div>
         </div>
     </footer>
 

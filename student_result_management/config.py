@@ -9,6 +9,11 @@ class Config:
     DB_NAME = os.getenv('DB_NAME', 'student_result_db')
 
     @staticmethod
+    def calculate_percentage(obtained, total):
+        if not total or total <= 0: return 0.0
+        return round((float(obtained) / float(total)) * 100, 2)
+
+    @staticmethod
     def calculate_grade(pct):
         if pct >= 90: return 'A+'
         if pct >= 80: return 'A'

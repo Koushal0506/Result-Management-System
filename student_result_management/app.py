@@ -46,7 +46,7 @@ def check_result():
         roll = request.form.get('roll_number', '').strip()
         student = db.students.find_one({"roll_number": {"$regex": f"^{roll}$", "$options": "i"}})
         if not student:
-            flash(f"No student record found with Roll Number '{roll}'. Please verify.", "danger")
+            flash(f"No student record found for Roll Number '{roll}'. Please verify your roll number (e.g. 23CS101) and try again.", "danger")
             return redirect(url_for('index'))
         return redirect(url_for('view_marksheet', student_id=str(student['_id'])))
     try: exams = list(db.examinations.find().sort('_id', -1))
@@ -376,7 +376,13 @@ def delete_result(id):
 def view_marksheet(student_id):
     db = get_db()
     student = db.students.find_one({"_id": ObjectId(student_id)})
+    if not student:
+        flash("Student record not found in system.", "danger")
+        return redirect(url_for('index'))
     results = list(db.results.find({"student_id": student_id}))
+    if not results:
+        flash(f"No examination marks have been published yet for {student.get('student_name', 'Student')} ({student.get('roll_number', '')}).", "warning")
+        return redirect(url_for('index'))
     total_max = sum(float(r['max_marks']) for r in results)
     total_obt = sum(float(r['marks_obtained']) for r in results)
     pct = round((total_obt / total_max * 100), 2) if total_max else 0
