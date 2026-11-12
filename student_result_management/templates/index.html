@@ -1,32 +1,40 @@
 {% extends "base.html" %}
 
-{% block title %}Check Student Result - Student Result Management System{% endblock %}
+{% block title %}Student Result Management System - College Examination Portal{% endblock %}
 
 {% block content %}
 <div class="container px-3 px-md-4 py-4 py-md-5">
-    <!-- Academic Header Banner -->
+    <!-- Academic Hero Banner -->
     <div class="text-center mb-4">
         <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 fw-semibold text-uppercase">
-            Academic Session 2025-2026
+            Academic Session 2024–2025 &bull; Student Result Management System
         </span>
-        <h1 class="h2 fw-bold text-dark mt-2 mb-1">
+        <h1 class="display-6 fw-bold text-dark mt-2 mb-2">
             Student Result Management System
         </h1>
-        <p class="text-muted small mb-0">
-            College Examination Evaluation &bull; Statement of Marks &amp; Grade Card Portal
+        <p class="lead text-muted fs-6 mx-auto mb-3" style="max-width: 760px;">
+            A complete academic examination and evaluation platform. Students can check their semester marksheets using their roll numbers, while administrators and faculty manage student enrollments, upload marks, and review performance reports.
         </p>
+        <div class="d-flex justify-content-center gap-2 flex-wrap mb-4">
+            <a href="#result-search-section" class="btn btn-primary px-4 fw-semibold shadow-sm">
+                🔍 Check Student Result
+            </a>
+            <a href="{{ url_for('admin_login') }}" class="btn btn-outline-dark px-4 fw-semibold">
+                🔒 Admin &amp; Faculty Login &rarr;
+            </a>
+        </div>
     </div>
 
     <!-- Main Student Result Check Card -->
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mb-5" id="result-search-section">
         <div class="col-12 col-md-10 col-lg-7 col-xl-6">
             <div class="card border shadow-sm rounded-3">
                 <div class="card-header bg-white border-bottom py-3 text-center">
                     <div class="mb-2">
                         <span class="fs-1">🎓</span>
                     </div>
-                    <h5 class="fw-bold mb-1 text-primary">Check Semester Examination Result</h5>
-                    <p class="text-muted small mb-0">Enter your College Roll Number to view and download your semester marksheet</p>
+                    <h5 class="fw-bold mb-1 text-primary">Student Result Portal</h5>
+                    <p class="text-muted small mb-0">Enter your Examination Roll Number to view and print your marksheet</p>
                 </div>
                 <div class="card-body p-3 p-md-4">
                     <form method="POST" action="{{ url_for('check_result') }}" id="searchResultForm">
@@ -62,45 +70,77 @@
                         </div>
                     </form>
 
-                    <!-- Quick Demo Sample Chips for Evaluator/Student Testing -->
+                    <!-- Quick Demo Records for Evaluation -->
                     <div class="alert alert-light border small text-muted mb-0 py-2">
                         <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
-                            <span><b>Demo Roll Numbers:</b></span>
+                            <span><b>Demo Records (Click to test):</b></span>
                             <div class="d-flex flex-wrap gap-1">
-                                <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" onclick="fillRoll('23CS101')">23CS101</button>
-                                <button type="button" class="btn btn-sm btn-outline-success py-0 px-2" onclick="fillRoll('23CS104')">23CS104</button>
-                                <button type="button" class="btn btn-sm btn-outline-info py-0 px-2" onclick="fillRoll('23IT201')">23IT201</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="fillRoll('23EC301')">23EC301</button>
+                                <button type="button" class="btn btn-sm btn-outline-primary py-0 px-2" onclick="fillRoll('23CS101')">23CS101 (CSE)</button>
+                                <button type="button" class="btn btn-sm btn-outline-success py-0 px-2" onclick="fillRoll('23CS104')">23CS104 (Topper)</button>
+                                <button type="button" class="btn btn-sm btn-outline-info py-0 px-2" onclick="fillRoll('23IT201')">23IT201 (IT)</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" onclick="fillRoll('23EC301')">23EC301 (ECE)</button>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-footer bg-light border-top text-center py-2">
                     <small class="text-muted">
-                        College faculty &amp; administrators: 
+                        College staff &amp; administrators: 
                         <a href="{{ url_for('admin_login') }}" class="text-decoration-none fw-semibold">Faculty / Admin Login &rarr;</a>
                     </small>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <!-- Simple 3-step Instructions -->
-            <div class="row g-2 mt-3 text-center">
-                <div class="col-4">
-                    <div class="p-2 bg-white rounded border shadow-sm h-100">
-                        <div class="small fw-bold text-primary">1. Roll Number</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Enter your exam roll no</div>
+    <!-- Core System Modules Overview -->
+    <div class="pt-3 border-top">
+        <div class="text-center mb-4">
+            <h5 class="fw-bold text-dark mb-1">System Modules &amp; Architecture</h5>
+            <p class="text-muted small">Features available in the administrator and faculty dashboard after login</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border shadow-sm rounded-3">
+                    <div class="card-body p-3">
+                        <div class="text-primary fs-3 mb-2">👨‍🎓</div>
+                        <h6 class="fw-bold mb-1">Student Record Management</h6>
+                        <p class="text-muted small mb-0">
+                            Enrolls students with roll numbers, departments, semesters, and contact details with full CRUD operations.
+                        </p>
                     </div>
                 </div>
-                <div class="col-4">
-                    <div class="p-2 bg-white rounded border shadow-sm h-100">
-                        <div class="small fw-bold text-primary">2. Search</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Click View Marksheet</div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border shadow-sm rounded-3">
+                    <div class="card-body p-3">
+                        <div class="text-success fs-3 mb-2">⚡</div>
+                        <h6 class="fw-bold mb-1">Marks &amp; Evaluation Engine</h6>
+                        <p class="text-muted small mb-0">
+                            Quick semester marks entry form and bulk CSV file upload with automated percentage and grade calculation.
+                        </p>
                     </div>
                 </div>
-                <div class="col-4">
-                    <div class="p-2 bg-white rounded border shadow-sm h-100">
-                        <div class="small fw-bold text-primary">3. Print &amp; PDF</div>
-                        <div class="text-muted" style="font-size: 0.75rem;">Save your grade card</div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border shadow-sm rounded-3">
+                    <div class="card-body p-3">
+                        <div class="text-info fs-3 mb-2">📊</div>
+                        <h6 class="fw-bold mb-1">Analytics &amp; PDF Reports</h6>
+                        <p class="text-muted small mb-0">
+                            Dashboard charts showing pass/fail distributions, departmental statistics, and downloadable PDF marksheets.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border shadow-sm rounded-3">
+                    <div class="card-body p-3">
+                        <div class="text-warning fs-3 mb-2">🛡️</div>
+                        <h6 class="fw-bold mb-1">Role-Based Access Control</h6>
+                        <p class="text-muted small mb-0">
+                            Protected administrative routes with secure hashed passwords, ensuring unauthorized public access is blocked.
+                        </p>
                     </div>
                 </div>
             </div>
